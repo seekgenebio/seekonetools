@@ -1,0 +1,15 @@
+name: seekonetools_env
+channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/bioconda
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
+
+dependencies:
+  - python=3.8.*
+  - pip
+  - star=2.7.2a
+  - subread=2.0.1
+  - qualimap=2.2.2a
+  - samtools=1.13
+  - r-argparse=2.0.3
+  - r-seurat=4.0.3
+
