@@ -1,0 +1,10 @@
+language: python
+
+python:
+  - "3.8"
+
+install:
+  - python setup.py develop
+
+script:
+  - echo 0
