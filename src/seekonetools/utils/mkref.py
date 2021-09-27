@@ -5,7 +5,7 @@ from collections import defaultdict
 from xopen import xopen
 
 
-def gtfstat(gtf, feature="gene", key='gene_biotype'):
+def gtfstat(gtf, feature="gene", key='gene_type'):
     '''
     gtf summary
     '''
@@ -26,7 +26,7 @@ def gtfparse(gtf):
     '''
     parse gtf
     '''
-    with xopen(gtf) as fh:    
+    with xopen(gtf) as fh:
         record = []
         for l in fh:
             if not l.strip():
@@ -38,18 +38,15 @@ def gtfparse(gtf):
             if tmp[2] == 'gene':
                 yield record
                 record = []
+                record.append(tmp)
             else:
                 record.append(tmp)
         yield record
-        
-def gtffilter(gtf, biotype, key='gene_biotype', filtered_gtf=None):
+
+def gtffilter(gtf, biotype, key='gene_type', filtered_gtf=None):
     '''
     filter gtf
     '''
-    print(gtf)
-    print(biotype)
-    print(key)
-    print(filtered_gtf)
     if not filtered_gtf:
         filtered_gtf = gtf.replace('.gtf', '.filtered.gtf')
     gtf_g = gtfparse(gtf)
@@ -64,7 +61,6 @@ def gtffilter(gtf, biotype, key='gene_biotype', filtered_gtf=None):
                     tmp_list = [s.strip() for s in tmp[-1].strip().strip(';').split(';')]
                     tmp_dict = dict([l.replace('"', '').split(' ') for l in tmp_list])
                     if tmp_dict[key] in biotype:
-                        print("yes")
                         gene_id = tmp_dict['gene_id']
                         gene_name = tmp_dict.get('gene_name', gene_id)
                         if 'gene_name' not in tmp[-1]:
@@ -83,13 +79,9 @@ def gtffilter(gtf, biotype, key='gene_biotype', filtered_gtf=None):
                     fhout.write('{}\n'.format("\t".join(tmp)))
 
 
-def mkref(fa, gtf, geomeDir, star_path='STAR'):
-    cmd = (f'{star_path} --runMode genomeGenerate --runThreadN 16 '
-           f'--genomeDir {geomeDir} --genomeFastaFiles {fa} '
-           f'--genomeSAindexNbases 14   --genomeChrBinNbits 18 '
-           f'--genomeSAsparseD 3   --limitGenomeGenerateRAM 17179869184 '
-           f'--sjdbGTFfile {gtf}'
-           )    
+def mkref(fa, gtf, genomeDir, runThreadN=8, star_path='STAR', 
+            star_opt='--genomeSAindexNbases 14 --genomeChrBinNbits 18 --genomeSAsparseD 3 --limitGenomeGenerateRAM 17179869184'):
+    cmd = (f'{star_path} --runMode genomeGenerate --runThreadN {runThreadN} --genomeDir {genomeDir} '
+           f'--genomeFastaFiles {fa} --sjdbGTFfile {gtf} {star_opt} ')
     run(cmd)
-
 
