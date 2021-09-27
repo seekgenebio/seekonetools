@@ -8,6 +8,7 @@ def do_seurat(matrix,
               minpct=0.1,
               logfc=1,
               logger=None,
+              rscript_path='Rscript',
               **kwargs):
     logger.info('seurat started!')
     outdir1 = os.path.join(outdir, 'step4')
@@ -17,7 +18,7 @@ def do_seurat(matrix,
                         'do_seurat.R')
 
     args = [
-        'Rscript', Rapp, '--indir', matrix, '--name', samplename, '--outdir',
+        rscript_path, Rapp, '--indir', matrix, '--name', samplename, '--outdir',
         outdir1, '--dims', dims, '--minpct', minpct, '--logfc', logfc
     ]
     args = [str(_) for _ in args]

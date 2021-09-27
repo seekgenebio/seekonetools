@@ -78,10 +78,10 @@ def prepare_funcs(structure: str, _barcode: list=None, _linker: list=None,
     barcode_idx = 0
     linker_idx = 0
     for _, (code, n) in enumerate(r1_structure):
-        if code == 'B':  
+        if code == 'B':
             if do_correct['B']:
                 tmp = build_dict(barcode.get(barcode_idx, barcode[0]), *B)
-                if r1_structure[_+1][0] == 'L':
+                if r1_structure[_+1][0] == 'L' and do_correct['L']:
                     funcs.append(
                         partial(correct_seq, linker=linker.get(linker_idx, linker[0]),
                             **tmp
@@ -92,11 +92,11 @@ def prepare_funcs(structure: str, _barcode: list=None, _linker: list=None,
                         partial(correct_seq,
                             **tmp
                         )
-                    ) 
+                    )
             else:
                 funcs.append(None)
             barcode_idx += 1
-        elif code == 'L':  
+        elif code == 'L':
             if do_correct['L']:
                 tmp = build_dict(linker.get(linker_idx, linker[0]), *L)
                 funcs.append(

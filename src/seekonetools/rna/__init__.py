@@ -22,11 +22,9 @@ def rna(obj, steps):
         except ImportError:
             from yaml import Loader
         with open(steps) as fh:
-            obj['steps'] = load(fh, Loader=Loader)       
+            obj['steps'] = load(fh, Loader=Loader)
     else:
         obj['steps'] = _steps
-
-
 
 
 @rna.command(help="extract cell barcode and umi.")
@@ -34,17 +32,20 @@ def rna(obj, steps):
 @click.option('--fq2', 'fq2', required=True, type=click.Path(), multiple=True, help='read2 fq file, can specify multiple times.')
 @click.option('--samplename', required=True, help='sample name.')
 @click.option('--outdir', default='./', show_default=True, type=click.Path(), help='output dir.')
-@click.option('--shift', is_flag=True, default=False, help='shift')
+@click.option('--shift', is_flag=True, default=False, show_default=True, help='shift')
 @click.option('--pattern', 'shift_pattern', default='A', help='')
 @click.option('--barcode', multiple=True, help='barcode white list file, can specify multiple times.')
 @click.option('--structure', help='')
 @click.option('--linker', multiple=True, help='linker white list file, can specify multiple times.')
-@click.option('--misB', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='')
-@click.option('--misL', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='')
-@click.option('--core', default=4, show_default=True, help='')
-@click.option('--chemistry', default='seekone')
+@click.option('--misB', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='err and indel')
+@click.option('--misL', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='err and indel')
+@click.option('--core', default=4, show_default=True, help='core')
+@click.option('--chemistry', help='eg: SO01V3')
 @click.pass_obj
 def step1(obj, **kwargs):
+    if kwargs['chemistry']:
+        kwargs.update(CHEMISTRY[kwargs['chemistry']])
+
     from .step1 import barcode
     kwargs['logger'] = obj['logger']
     barcode(**kwargs)
@@ -85,6 +86,7 @@ def step3(obj, **kwargs):
 @click.option('--dims', default=15, show_default=True, help='')
 @click.option('--minpct', default=0.1, show_default=True, help='')
 @click.option('--logfc', default=1.0, show_default=True, help='')
+@click.option('--rscript_path', 'rscript_path', default='Rscript', help='')
 @click.pass_obj
 def step4(obj, **kwargs):
     from .step4 import do_seurat
@@ -120,8 +122,12 @@ def report(obj, **kwargs):
 @click.option('--gtf', required=True, type=click.Path(), help='')
 @click.option('--star_path', 'star_path', default='STAR', help='')
 @click.option('--samtools_path', 'samtools_path', default='samtools', help='')
-@click.option('--chemistry', default='seekone')
+@click.option('--rscript_path', 'rscript_path', default='Rscript', help='')
+@click.option('--chemistry', help='eg: SO01V3')
 def run(obj, **kwargs):
+    if kwargs['chemistry']:
+        kwargs.update(CHEMISTRY[kwargs['chemistry']])
+
     kwargs['logger'] = obj['logger']
     kwargs['outdir'] = os.path.join(kwargs['outdir'], kwargs['samplename'])
     if 'step1' in obj['steps']:
