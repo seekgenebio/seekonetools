@@ -4,7 +4,7 @@ python:
   - "3.8"
 
 install:
-  - python setup.py develop
+  - pip install .
 
 script:
   - echo 0
