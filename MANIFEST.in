@@ -1,0 +1,2 @@
+recursive-include src/seekonetools/rna/barcode/ *
+recursive-include src/seekonetools/rna/template/ *
