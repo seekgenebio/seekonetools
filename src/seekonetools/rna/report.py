@@ -14,18 +14,21 @@ def diff_table(f, N=20):
          .assign(cluster=lambda df: df['cluster'].map(lambda x: f'cluster{x}'))
     )
     # table_id, classes
+    fold_change_title = 'avg_logFC'
+    if 'avg_log2FC' in df.columns:
+        fold_change_title = 'avg_log2FC'
     df2 = (df.drop(columns=['p_val',  'pct.1',  'pct.2'])
         .groupby('cluster')
-        .apply(lambda x: x.sort_values(['p_val_adj', 'avg_logFC'], ascending=[True, False]).head(N))
+        .apply(lambda x: x.sort_values(['p_val_adj', fold_change_title], ascending=[True, False]).head(N))
         .reset_index(drop=True)
-        .pivot_table(values=['avg_logFC', 'p_val_adj'], index=['Ensembl', 'gene'], columns='cluster')
+        .pivot_table(values=[fold_change_title, 'p_val_adj'], index=['Ensembl', 'gene'], columns='cluster')
         .swaplevel(axis=1)
         .sort_index(1, 0, key=lambda x: x.str.replace('cluster', '').astype(int))
     )
     # index_names
     return (df2.to_html(table_id='marker_table', classes='display', na_rep='-', index_names=False)
         .replace('border="1"', ''))
- 
+
 
 def barcode_rank_data(countsFile, barcodesFile):
     df = pd.read_csv(countsFile, sep='\t')
@@ -58,7 +61,7 @@ def png2base64(f):
 def report(samplename, outdir, **kwargs):
     import json
     from jinja2 import Environment, FileSystemLoader
-    
+
     summary_file = os.path.join(outdir, f'{samplename}_summary.json')
     assert os.path.exists(summary_file), f'{summary_file} not found!'
     with open(summary_file) as fh:
@@ -69,7 +72,7 @@ def report(samplename, outdir, **kwargs):
     sequencing_table['Valid Barcodes'] = f'{summary["stat"]["valid"]/summary["stat"]["total"]:.2%}'
     sequencing_table['Sequencing Saturation'] = f'{summary["cells"]["Sequencing Saturation"]:.2%}'
     del summary["cells"]["Sequencing Saturation"]
-    
+
     if 'no_anchor' in summary["stat"]:
         sequencing_table['Without Anchor'] = f'{summary["stat"]["no_anchor"]:,}'
     if 'B' in summary["stat"]:
@@ -146,3 +149,4 @@ def report(samplename, outdir, **kwargs):
     with open(os.path.join(outdir, f'{samplename}_summary.csv'), 'w') as fh:
         fh.write(header + '\n')
         fh.write(','.join(str(_).replace(',', '') for _ in summary_data)+ '\n')
+
