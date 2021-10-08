@@ -37,8 +37,8 @@ def rna(obj, steps):
 @click.option('--barcode', multiple=True, help='barcode white list file, can specify multiple times.')
 @click.option('--structure', help='')
 @click.option('--linker', multiple=True, help='linker white list file, can specify multiple times.')
-@click.option('--misB', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='err and indel')
-@click.option('--misL', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='err and indel')
+@click.option('--misB', 'B', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='err and indel')
+@click.option('--misL', 'L', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='err and indel')
 @click.option('--core', default=4, show_default=True, help='core')
 @click.option('--chemistry', help='eg: SO01V3')
 @click.pass_obj
@@ -115,8 +115,8 @@ def report(obj, **kwargs):
 @click.option('--barcode', multiple=True, help='barcode white list file, can specify multiple times.')
 @click.option('--structure', help='')
 @click.option('--linker', multiple=True, help='linker white list file, can specify multiple times.')
-@click.option('--misB', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='')
-@click.option('--misL', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='')
+@click.option('--misB', 'B', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='')
+@click.option('--misL', 'L', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='')
 @click.option('--core', default=4, show_default=True, help='')
 @click.option('--genomeDir', 'genomeDir', required=True, type=click.Path(), help='')
 @click.option('--gtf', required=True, type=click.Path(), help='')
@@ -124,6 +124,7 @@ def report(obj, **kwargs):
 @click.option('--samtools_path', 'samtools_path', default='samtools', help='')
 @click.option('--rscript_path', 'rscript_path', default='Rscript', help='')
 @click.option('--chemistry', help='eg: SO01V3')
+@click.option('--expectNum', 'expectNum', default=3000, show_default=True, help='')
 def run(obj, **kwargs):
     if kwargs['chemistry']:
         kwargs.update(CHEMISTRY[kwargs['chemistry']])
