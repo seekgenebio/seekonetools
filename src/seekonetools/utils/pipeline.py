@@ -104,7 +104,7 @@ class Worker(Process):
 
 
 class Pipeline:
-    def __init__(self, func, fq1, fq2, fqout1, core, stat=None, fqout2=None, buffer_size=400 * 1024**2):
+    def __init__(self, func, fq1, fq2, fqout1, core, stat=None, fqout2=None, buffer_size=40 * 1024**2):
         self.n_workers = core
         self.fq1 = fq1
         self.fq2 = fq2
