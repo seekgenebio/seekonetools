@@ -7,5 +7,3 @@ cd seekonetools
 conda env create -n seekonetools -f conda_dependencies.yml
 python setup.py install
 ```
-
-
