@@ -1,2 +1,3 @@
+include src/seekonetools/rna/*.R
 recursive-include src/seekonetools/rna/barcode/ *
 recursive-include src/seekonetools/rna/template/ *
