@@ -28,12 +28,14 @@ def run_bamsort(inbam, outbam, byname=False, clean=True, core=4, samtools_path='
         os.remove(inbam)
     return outbam
 
-def run_qualimap(bam, gtf, outdir, s='f'):
+def run_qualimap(bam, gtf, outdir, SC5P, s="f"):
     strand = { 
         'f': 'strand-specific-forward',
         'r': 'strand-specific-reverse',
         'non': 'non-strand-specific'
-    }
+    }   
+    if SC5P:
+        s="r"
     # gtf.gz?
     if gtf.endswith('.gz'):
         gtf_file = os.path.join(outdir, 'tmp.gtf')
@@ -91,10 +93,13 @@ def mapping_summary(STARLog, RnaSeqMetrics):
     return summary
 
 
-def run_featureCounts(bam, gtf, samplename, outdir, core=4, **kwargs):
+def run_featureCounts(bam, gtf, samplename, outdir, region, SC5P, core=4, **kwargs):
     outcounts = os.path.join(outdir, 'counts.txt')
+    s="1"
+    if SC5P:
+        s="2"
     args = [
-        'featureCounts', '-T', core, '-s', 1, '-M', '-O', '-g', 'gene_id',
+        'featureCounts', '-T', core, '-t', region ,'-s', s, '-M', '-O', '-g', 'gene_id',
         '--fracOverlap', 0.5, '-a', gtf, '-o', outcounts, '-R', 'BAM', bam
     ]
     args = [str(_) for _ in args]
@@ -108,6 +113,8 @@ def align(fq,
           gtf,
           samplename,
           outdir,
+          region,
+          sc5p,
           core=4,
           logger=None,
           star_path='STAR',
@@ -148,12 +155,20 @@ def align(fq,
     bam = f'{prefix}SortedByCoordinate.bam'
 
     logger.info('run_qualimap started!')
-    RnaSeqMetrics = run_qualimap(bam=bam, gtf=gtf, outdir=STAR_dir)
+    RnaSeqMetrics = run_qualimap(bam=bam, gtf=gtf, outdir=STAR_dir, SC5P=sc5p)
     logger.info('run_qualimap done!')
 
     with open(os.path.join(outdir, f'{samplename}_summary.json')) as fh:
+        refpath=os.path.dirname(genomeDir.rstrip("/"))
+        reffile=os.path.join(refpath,'reference.json')
+        if os.path.exists(reffile):
+                with open(reffile) as refjson:
+                    refj=json.load(refjson)
+                    genome=refj['genomes'][0]
+        else:
+                genome=genomeDir    
         summary = json.load(fh)
-        summary['reference'] = genomeDir
+        summary['reference'] = genome
         Total = summary['stat']['total']
     summary_tmp = defaultdict()
     tmp = mapping_summary(STARLog, RnaSeqMetrics)
@@ -189,6 +204,8 @@ def align(fq,
                                 samplename=samplename,
                                 outdir=featureCounts_dir,
                                 gtf=gtf,
+                                region=region,
+                                SC5P=sc5p,
                                 core=core)
         logger.info('run_featureCounts done!')
     bam = os.path.join(featureCounts_dir, f'{samplename}_SortedByCoordinate.bam.featureCounts.bam')
