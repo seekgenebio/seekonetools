@@ -59,6 +59,9 @@ def step1(obj, **kwargs):
 @click.option('--star_path', 'star_path', default='STAR', help='')
 @click.option('--samtools_path', 'samtools_path', default='samtools', help='')
 @click.option('--core', default=4, show_default=True, help='')
+@click.option('--region', default='exon', show_default=True, help='exon or transcript')
+@click.option("--sc5p",is_flag=True,default=False,show_default=True,help="if set, the single cell data is considered as 5' data.")
+
 @click.pass_obj
 def step2(obj, **kwargs):
     from .step2 import align
@@ -72,6 +75,7 @@ def step2(obj, **kwargs):
 @click.option('--samplename', required=True, help='')
 @click.option('--gtf', required=True, type=click.Path(), help='')
 @click.option('--expectNum', 'expectNum', default=3000, show_default=True, help='')
+#@click.option('--forceCell', 'forceCell',  help='number of force cells')
 @click.pass_obj
 def step3(obj, **kwargs):
     from .step3 import count
@@ -96,6 +100,7 @@ def step4(obj, **kwargs):
 
 @rna.command(help="report.")
 @click.option('--samplename', required=True, help='')
+@click.option('--region', default='exon', show_default=True, help='exon or transcript')
 @click.option('--outdir', default='./', show_default=True, type=click.Path(), help='')
 @click.pass_obj
 def report(obj, **kwargs):
@@ -118,6 +123,8 @@ def report(obj, **kwargs):
 @click.option('--misB', 'B', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='')
 @click.option('--misL', 'L', nargs=2, default=(1, 0), type=click.Tuple([int, int]), show_default=True, help='')
 @click.option('--core', default=4, show_default=True, help='')
+@click.option('--region', default='exon', show_default=True, help='exon or transcript')
+@click.option("--sc5p",is_flag=True,default=False,show_default=True,help="if set, the single cell data is considered as 5' data.")
 @click.option('--genomeDir', 'genomeDir', required=True, type=click.Path(), help='')
 @click.option('--gtf', required=True, type=click.Path(), help='')
 @click.option('--star_path', 'star_path', default='STAR', help='')
@@ -125,6 +132,7 @@ def report(obj, **kwargs):
 @click.option('--rscript_path', 'rscript_path', default='Rscript', help='')
 @click.option('--chemistry', help='eg: SO01V3')
 @click.option('--expectNum', 'expectNum', default=3000, show_default=True, help='')
+#@click.option('--forceCell', 'forceCell', help='number of force cells')
 def run(obj, **kwargs):
     if kwargs['chemistry']:
         kwargs.update(CHEMISTRY[kwargs['chemistry']])

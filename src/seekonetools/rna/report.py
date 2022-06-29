@@ -84,6 +84,8 @@ def report(samplename, outdir, **kwargs):
     if 'too_short' in summary["stat"]:
         sequencing_table['Too Short'] =  f'{summary["stat"]["too_short"]:,}'
     b_total_base = sum([sum(v) for v in summary["barcode_q"].values()])
+    #print(summary["barcode_q"].values())
+    #print([sum(v[30:]) for v in summary["barcode_q"].values()])
     b30_base = sum([sum(v[30:]) for v in summary["barcode_q"].values()])
     sequencing_table['Q30 Bases in Barcode'] = f'{b30_base/b_total_base:.2%}'
     u_total_base = sum([sum(v) for v in summary["umi_q"].values()])
@@ -93,7 +95,7 @@ def report(samplename, outdir, **kwargs):
     mapping_table = {k: f'{v:.2%}' for k, v in summary["mapping"].items()}
 
     cells_table = dict([(k, f'{v:,}') if isinstance(v, int) else (k,f'{v:.2%}') for k,v in summary["cells"].items()])
-
+    
     sample_table = {
         'Name': samplename, 
         'Description': '',
@@ -101,6 +103,10 @@ def report(samplename, outdir, **kwargs):
         'Chemistry': '',
         'Seekone tools Version': summary["__version__"]
     }
+    if kwargs['region'] == "exon":
+        sample_table.update({"Include introns":"False"})
+    else:
+        sample_table.update({"Include introns":"True"})
     
     reduction_xls = os.path.join(outdir, 'step4', 'tsne_umi.xls')
     assert os.path.exists(reduction_xls), f'{reduction_xls} not found!'
@@ -118,6 +124,7 @@ def report(samplename, outdir, **kwargs):
     with open(os.path.join(outdir, f'{samplename}_report.html'), 'w') as fh:
         rawdata = lzstring.LZString().compressToBase64(json.dumps(data))
         fh.write(template.render(
+            logobase64 = png2base64(os.path.join(template_dir,'logo.png')),
             sequencing_table = sequencing_table,
             mapping_table = mapping_table,
             cells_table = cells_table,
@@ -134,7 +141,7 @@ def report(samplename, outdir, **kwargs):
     summary_data = [
              samplename,
              cells_table['Estimated Number of Cells'],
-             sequencing_table['Number of Reads'],
+#             sequencing_table['Number of Reads'],
              cells_table['Mean Reads per Cell'],
              cells_table['Median Genes per Cell'],
              sequencing_table['Number of Reads'],

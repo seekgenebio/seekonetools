@@ -297,6 +297,8 @@ read_10x_and_compare_plot <- function(matrix_counts, ambient_prop, barcode_umi_c
     indices_ambient_50k <- read.csv('10x_use_bcs.txt', header=FALSE)
     features <- read.table('raw_feature_bc_matrix/features.tsv.gz', sep='\t')
     bc_order <- read.csv('bc_order.txt', header=FALSE)
+    #print(bc_order)
+    print('bc_order output')
 
     #compare with 10x and plot
     #plot ambient_profile_p overlap with 10X
@@ -338,7 +340,8 @@ matrix_read <- read10xCounts(inputdir)
 matrix_counts <- counts(matrix_read)
 barcode_counts <- colSums(matrix_counts)
 
-
+print(barcode_counts)
+print("raw_barcode")
 #  find cells by top umi num barcode
 # Number of additional barcodes to consider after the initial cell calling
 print("find cells by top umi num barcode")
@@ -363,6 +366,8 @@ print(paste0("ambient_candidate_barcode:", length(umi_sort_indices)))
 
 
 cell_barcode <- top_n_indices
+#cell_barcode
+#print(length(cell_barcode))
 output_10x_format_results(paste0(outputdir,'_'), matrix_read, matrix_counts, cell_barcode)
 
 if (length(barcode_umi_candidate) == 0){
@@ -432,6 +437,8 @@ print(paste0('number of cells identify from ambient: ', length(ambient_barcode))
 
 # merge ambient and top_umi cell barcode
 cell_barcode <- c(ambient_barcode, top_n_indices)
+head(cell_barcode)
+print(length(cell_barcode))
 print(paste0('number of all identifed cells: ', length(cell_barcode)))
 
 #output_10x_format_results

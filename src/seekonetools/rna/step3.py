@@ -63,6 +63,7 @@ def umi_count(reads_group, umi_correct_detail_fh):
     assigned_dict = defaultdict(lambda: defaultdict(int))
     for barcode_umi, g in groupby(reads_group, key=lambda x: x.qname):
         _, umi = barcode_umi.split('_')[:2]
+        #print(_,umi)
         if umi == umi[0]*len(umi):   # poly
             continue
         tmp_dict = defaultdict(int)
@@ -231,11 +232,16 @@ def count(bam, outdir, samplename, gtf, logger, expectNum=3000, **kwargs):
     logger.info('write raw matrix started!')
     write_raw_matrix(counts_file, raw_matrix_dir, gtf)
 
-
-    Rapp = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+    if 'forceCell' in kwargs:
+        Rapp = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                        'force.cell_identify.R')
+        args = ['Rscript', Rapp, '-i', raw_matrix_dir, '-f', kwargs['forceCell']]
+        args = [str(_) for _ in args]
+    else:
+        Rapp = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                         'cell_identify.R')
-    args = ['Rscript', Rapp, '-i', raw_matrix_dir, '-e', expectNum, '-p', 0.01]
-    args = [str(_) for _ in args]
+        args = ['Rscript', Rapp, '-i', raw_matrix_dir, '-e', expectNum, '-p', 0.01]
+        args = [str(_) for _ in args]
     logger.info('call cell started!')
     print(' '.join(args))
     run(args, check=False)

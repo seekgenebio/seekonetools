@@ -4,19 +4,11 @@
                 <div class="summary_description" style="display: none;">
                     <dl>
                       <dt>Reads Mapped to Genome</dt>
-                      <dd>具有有效Barcode的read pairs比对到参考基因组的比例</dd>
-                      <dt>Reads Mapped Confidently to Genome</dt>
-                      <dd>具有有效Barcode的read pairs唯一比对到参考基因组的比例</dd>
-                      <dt>Reads Mapped to Intergenic Regions</dt>
-                      <dd>具有有效Barcode的read pairs比对到基因间区的比例</dd>
-                      <dt>Reads Mapped to Intronic Regions</dt>
-                      <dd>具有有效Barcode的read pairs比对到内含子区域的比例</dd>
-                      <dt>Reads Mapped to Exonic Regions</dt>
-                      <dd>具有有效Barcode的read pairs比对到外显子区域的比例</dd>
+                      <dd>各个簇的差异表达基因(top 20)，不对在簇中的表达不足10%的基因进行差异检测</dd>
                     </dl>
                 </div>
               </div>
-            <h1>Mapping</h1>
+            <h1>Top Genes By Cluster (Log2 fold-change, p-value)</h1>
             </div>
             {{ marker_table|safe }}                 
           </div>

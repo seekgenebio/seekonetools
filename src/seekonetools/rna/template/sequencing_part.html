@@ -3,16 +3,26 @@
               <div class="has_desc" onclick="show_description(event)">
                 <div class="summary_description" style="display: none;">
                     <dl>
-                      <dt>Reads Mapped to Genome</dt>
-                      <dd>具有有效Barcode的read pairs比对到参考基因组的比例</dd>
-                      <dt>Reads Mapped Confidently to Genome</dt>
-                      <dd>具有有效Barcode的read pairs唯一比对到参考基因组的比例</dd>
-                      <dt>Reads Mapped to Intergenic Regions</dt>
-                      <dd>具有有效Barcode的read pairs比对到基因间区的比例</dd>
-                      <dt>Reads Mapped to Intronic Regions</dt>
-                      <dd>具有有效Barcode的read pairs比对到内含子区域的比例</dd>
-                      <dt>Reads Mapped to Exonic Regions</dt>
-                      <dd>具有有效Barcode的read pairs比对到外显子区域的比例</dd>
+                      <dt>Number of reads</dt> 
+                      <dd>clean reads数目</dd>
+                      <dt>Valid Barcode</dt>
+                      <dd>具有有效结构的reads比例</dtd>
+                      <dt>Sequencing Saturation</dt>
+                      <dd>测序饱和度</dd>
+                      <dt>Without anchor</dt>
+                      <dd>没有anchor碱基的reads数目</dd>
+                      <dt>without Barcode</dt>
+                      <dd>没有barcode 的reads数目</dd>
+                      <dt>without Linker</dt>
+                      <dd>没有linker结构的reads数目</dd>
+                      <dt>Trimmed</dt>
+                      <dd>去掉polyA的reads数目</dd>
+                      <dt>Too short</dt>
+                      <dd>因为polyA结构过长而丢掉的reads数目</dd>
+                      <dt>Q30 Bases in Barcode</dt>
+                      <dd>有效barcode 的reads中Barcode碱基质量大于30的比例</dd>
+                      <dt>Q30 Bases in UMI</dt>
+                      <dd>有效barcode 的reads中UMI碱基质量大于30的比例</dt>
                     </dl>
                 </div>
               </div>
