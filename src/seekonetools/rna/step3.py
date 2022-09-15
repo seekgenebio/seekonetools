@@ -24,13 +24,20 @@ def read_gtf(gtf):
             if line.startswith('#'): continue
             tmp = line.strip().split('\t')
             if tmp[2] == 'gene':
-                d = dict([_.strip().split(' ') for _ in tmp[-1].strip(';').split(';')])
-                if 'gene_id' in d:
-                    gene_id = d['gene_id'].replace('"', '')
-                    if 'gene_name' in d:
-                        gene_name = d['gene_name'].replace('"', '')
+                if "gene_id" in tmp[-1]:
+                    gene_id=re.findall("gene_id \"([A-Za-z0-9_\.\-\:/\ ()+]+)\";",tmp[-1])[0]
+                    gene_names=re.findall("gene_name \"([A-Za-z0-9_\.\-\:/\ ()+]+)\"",tmp[-1])
+                    if len(gene_names)==0:
+                          gene_name = gene_id
                     else:
-                        gene_name = gene_id
+                          gene_name = gene_names[0]
+                #d = dict([_.strip().split(' ') for _ in tmp[-1].strip(';').split(';')])
+                #if 'gene_id' in d:
+                #    gene_id = d['gene_id'].replace('"', '')
+                #    if 'gene_name' in d:
+                #        gene_name = d['gene_name'].replace('"', '')
+                #    else:
+                #        gene_name = gene_id
                     if tmp[1] in ('chrM', 'MT', 'mt'):
                         if not mt_regex.match(gene_id):
                             gene_id = f'MT-{gene_id}'
@@ -71,10 +78,11 @@ def umi_count(reads_group, umi_correct_detail_fh):
         for r in g:
             n += 1
             if r.has_tag('XT'):
-                XT =r.get_tag('XT').split(':')[-1]
+                XT =r.get_tag('XT').split('XT:Z:')[-1]
+                #print(XT)
                 if ',' in XT:
                     break
-                gene_id = XT.split(':')[-1]
+                gene_id = XT.split('XT:Z:')[-1]
                 tmp_dict[gene_id] = r.mapping_quality
         if len(tmp_dict) == 1:
             if tmp_dict[gene_id] == 255 or n > 1:
@@ -105,6 +113,8 @@ def write_raw_matrix(counts_file, raw_matrix_dir, gtf):
     name_df = pd.DataFrame(read_gtf(gtf), columns=['geneID', 'Symbol'])
 
     gene_dict = name_df.reset_index().set_index('geneID')['index'].to_dict()
+    #print(gene_dict)
+    #print(name_df)
     row, col, data = [], [], []
     barcodes = []
     n = 0
@@ -113,6 +123,7 @@ def write_raw_matrix(counts_file, raw_matrix_dir, gtf):
         for k, g in groupby(fh, lambda x: x.split('\t')[0]):
             barcodes.append(k)
             for _ in g:
+     #           print(_)
                 tmp = _.split('\t')
                 data.append(int(tmp[2]))
                 row.append(gene_dict[tmp[1]])
@@ -232,11 +243,12 @@ def count(bam, outdir, samplename, gtf, logger, expectNum=3000, **kwargs):
     logger.info('write raw matrix started!')
     write_raw_matrix(counts_file, raw_matrix_dir, gtf)
 
-    if 'forceCell' in kwargs:
+    if kwargs['forceCell'] != None:
         Rapp = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                         'force.cell_identify.R')
         args = ['Rscript', Rapp, '-i', raw_matrix_dir, '-f', kwargs['forceCell']]
         args = [str(_) for _ in args]
+        logger.info('force cell')
     else:
         Rapp = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                         'cell_identify.R')

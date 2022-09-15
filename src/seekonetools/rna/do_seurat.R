@@ -81,7 +81,8 @@ Idents(obj) <- 'RNA_snn_res.0.8'
 obj <- RunUMAP(obj, dims = dims)
 ggsave('umap.png', DimPlot(obj, reduction = "umap"))
 
-obj <- RunTSNE(obj, dims = dims)
+#obj <- RunTSNE(obj, dims = dims)
+obj <- RunTSNE(obj, dims = dims,check_duplicates = FALSE)
 ggsave('tsne.png', DimPlot(obj, reduction = "tsne"))
 
 pal <-colorRampPalette(c("blue","cyan", "yellow","red"))

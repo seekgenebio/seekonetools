@@ -21,65 +21,14 @@
     <h1>Cells</h1>
   </div>
 
-  <div class="plot" id="umi_rank_plot"></div>
+  <div class="plot" id="barcode_rank_plot"></div>
   <script>
-    //return Array(end -start).fill(start).map((x, y) => x + y)
-    function range(start, stop, step = 1) {
-        return Array(Math.ceil((stop - start) / step)).fill(start).map((x, y) => x + y * step)
-    }
-    var points_cell = {
-      // start from 1
-      x: range(data["cells_index"][0] + 1, data["cells_index"][1] + 1 + 1),
-      y: data["cells_data"],
-      mode: "lines",
-      name: "Cells",
-      marker :{
-      }
-    };
-    var points_background = {
-      // start from 1
-      x: range(data["background_index"][0] + 1 , data["background_index"][1] + 1 + 1,  data["background_index"][2]),
-      y: data["background_data"],
-      mode: "lines",
-      name: "Background",
-      marker :{
-          color: "gray",
-      }
-    };
-    var layout = {
-      //title: "Cells",
-      xaxis: {
-        title: "Barcodes",
-        type: "log",
-        autorange: true,
-        showspikes: true,
-        spikedash: 'solid',
-        spikethickness : 1,
-        spikecolor : 'black',
-      },
-      yaxis: {
-        title: "UMI counts",
-        type: "log",
-        autorange: true,
-        showspikes: true,
-        spikedash: 'solid',
-        spikethickness : 1,
-        spikecolor : 'black',
-      },
-      margin: {
-        l: 50,
-        r: 30,
-        t: 30,
-        b: 50,
-      },
-      width: 520,
-      height: 330,
-    };
-    var plotData = [points_cell, points_background];
-    var rmButtons = ['toImage', 'zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'toggleSpikelines', 'hoverCompareCartesian'];
-    Plotly.newPlot("umi_rank_plot", plotData, layout, {modeBarButtonsToRemove: rmButtons, displaylogo: false});
+    Plotly.newPlot("barcode_rank_plot",
+                    data.barcode_rank_data.data,
+                    data.barcode_rank_data.layout,
+                    data.barcode_rank_data.config
+                  );
   </script>
-  
   <table class="table table-hover" data-pagination="true" data-search="true" style="margin-top: 52;">
     {% for key, value in cells_table.items() %}
     <tr>

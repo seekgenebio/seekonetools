@@ -168,6 +168,7 @@ def barcode(fq1:list, fq2:list, samplename: str, outdir:str,
                             _linker=linker,
                             B=B, L=L)
     logger.info('prepare done!')
+    logger.info('test devolp')
     # pre precess? check structure?
 
     # start worker processes
@@ -178,7 +179,7 @@ def barcode(fq1:list, fq2:list, samplename: str, outdir:str,
                     r1_structure=r1_structure,
                     funcs=funcs
                     )
-
+    logger.info('test func')
     stat = Stat()
     pipeline = Pipeline(
         func = worker_func,

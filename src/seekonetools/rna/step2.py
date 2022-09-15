@@ -33,7 +33,7 @@ def run_qualimap(bam, gtf, outdir, SC5P, s="f"):
         'f': 'strand-specific-forward',
         'r': 'strand-specific-reverse',
         'non': 'non-strand-specific'
-    }   
+    }
     if SC5P:
         s="r"
     # gtf.gz?
@@ -166,7 +166,7 @@ def align(fq,
                     refj=json.load(refjson)
                     genome=refj['genomes'][0]
         else:
-                genome=genomeDir    
+                genome=genomeDir
         summary = json.load(fh)
         summary['reference'] = genome
         Total = summary['stat']['total']
